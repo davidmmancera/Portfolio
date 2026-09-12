@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es" ng-app="portfolioApp">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>David Muñoz Mancera — Full Stack Developer</title>
+
+<!-- Bootstrap (utilidades / grid) -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Tipografías -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #0e131a;
+    --panel: #151c26;
+    --panel-2: #101620;
+    --border: #263241;
+    --text: #d9e2ea;
+    --text-dim: #7e8ea0;
+    --accent: #e2a63c;
+    --accent-dim: rgba(226,166,60,.14);
+    --ok: #4f9d92;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    margin:0;
+    min-height:100vh;
+  }
+
+  code, .mono, h1, h2, .brand, .nav-link, .badge-year, .log-time, .status-pill{
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  a{ color: var(--accent); text-decoration:none; }
+  a:hover{ color:#f0bc63; }
+
+  ::selection{ background: var(--accent-dim); color: var(--accent); }
+
+  /* ---------- Boot overlay ---------- */
+  #boot{
+    position:fixed; inset:0; background:var(--bg); z-index:999;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono', monospace; color:var(--text-dim);
+    font-size:.85rem; letter-spacing:.02em;
+    transition: opacity .5s ease;
+  }
+  #boot .line{ color:var(--accent); }
+  @media (prefers-reduced-motion: reduce){ #boot{ transition:none; } }
+
+  /* ---------- Layout ---------- */
+  .app-shell{ display:flex; min-height:100vh; }
+
+  .sidebar{
+    width: 250px;
+    flex-shrink:0;
+    background: var(--panel-2);
+    border-right: 1px solid var(--border);
+    padding: 1.75rem 1.25rem;
+    position: sticky;
+    top:0;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+
+  .brand{ font-size:.95rem; font-weight:600; color:var(--text); line-height:1.4; }
+  .brand small{ display:block; color:var(--text-dim); font-family:'Inter'; font-size:.72rem; margin-top:.35rem; }
+
+  .status-pill{
+    display:inline-flex; align-items:center; gap:.4rem;
+    font-size:.65rem; color:var(--ok); border:1px solid rgba(79,157,146,.4);
+    background: rgba(79,157,146,.08); padding:.25rem .55rem; border-radius:2px;
+    margin-top:.9rem;
+  }
+  .status-pill .dot{ width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 6px var(--ok); }
+
+  .modules{ list-style:none; margin:2rem 0 0; padding:0; }
+  .modules li + li{ margin-top:.15rem; }
+  .modules a{
+    display:flex; align-items:center; gap:.6rem;
+    color: var(--text-dim); font-size:.78rem; padding:.55rem .6rem;
+    border-left:2px solid transparent; border-radius:0 3px 3px 0;
+  }
+  .modules a .idx{ color:var(--text-dim); opacity:.5; font-size:.72rem; }
+  .modules a:hover{ color:var(--text); background: rgba(255,255,255,.02); }
+  .modules a.active{
+    color: var(--accent); border-left-color: var(--accent); background: var(--accent-dim);
+  }
+  .modules a.active .idx{ color: var(--accent); opacity:1; }
+
+  .sidebar-foot{ font-size:.68rem; color:var(--text-dim); line-height:1.6; }
+  .sidebar-foot a{ color:var(--text-dim); }
+  .sidebar-foot a:hover{ color:var(--accent); }
+
+  main{ flex:1; padding: 3rem 3.5rem; max-width: 980px; }
+
+  .module-tag{
+    font-size:.72rem; color:var(--text-dim); margin-bottom:.6rem;
+    display:flex; align-items:center; gap:.5rem;
+  }
+  .module-tag .bar{ width:16px; height:1px; background:var(--border); }
+
+  h2{ font-size:1.05rem; font-weight:600; color:var(--text); margin:0 0 1.6rem; }
+  h2 .cm{ color:var(--accent); }
+
+  .lede{ color: var(--text-dim); font-size:.92rem; max-width:64ch; line-height:1.7; }
+
+  /* ---------- Hero ---------- */
+  .hero h1{
+    font-size: clamp(2rem, 4.4vw, 3.4rem);
+    font-weight:700; line-height:1.08; margin:.4rem 0 .8rem; letter-spacing:-.01em;
+    color: var(--text);
+  }
+  .hero .role{ color:var(--text-dim); font-size:1.05rem; margin-bottom:1.1rem; }
+  .hero .metrics{ display:flex; gap:2.4rem; margin-top:2.2rem; flex-wrap:wrap; }
+  .metric .num{ font-family:'IBM Plex Mono'; font-size:1.5rem; color:var(--accent); }
+  .metric .lbl{ font-size:.72rem; color:var(--text-dim); margin-top:.2rem; }
+
+  .cursor{ display:inline-block; width:.55ch; background:var(--accent); animation: blink 1s steps(1) infinite; margin-left:2px; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .cursor{ animation:none; } }
+
+  /* ---------- Skill bars ---------- */
+  .cat-title{ font-size:.72rem; color:var(--accent); margin: 2rem 0 .8rem; }
+  .cat-title:first-of-type{ margin-top:0; }
+  .skill-row{ display:grid; grid-template-columns: 150px 1fr 70px; align-items:center; gap:1rem; margin-bottom:.55rem; }
+  .skill-row .name{ font-size:.82rem; color:var(--text); }
+  .gauge{ height:6px; background:var(--panel); border:1px solid var(--border); border-radius:1px; overflow:hidden; }
+  .gauge > span{ display:block; height:100%; background: linear-gradient(90deg, var(--ok), var(--accent)); }
+  .skill-row .years{ font-size:.7rem; color:var(--text-dim); text-align:right; }
+
+  .tag-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.4rem; }
+  .tag{ font-size:.72rem; color:var(--text-dim); border:1px solid var(--border); padding:.3rem .6rem; border-radius:2px; }
+
+  /* ---------- Experience log ---------- */
+  .log-entry{ border:1px solid var(--border); background:var(--panel); border-radius:3px; padding:1.3rem 1.4rem; margin-bottom:1rem; }
+  .log-head{ display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:.5rem; }
+  .log-time{ font-size:.72rem; color:var(--accent); }
+  .log-place{ font-size:.72rem; color:var(--text-dim); }
+  .log-role{ font-size:.98rem; font-weight:600; color:var(--text); margin:.4rem 0 .3rem; }
+  .log-stack{ font-size:.74rem; color:var(--text-dim); margin-bottom:.7rem; }
+  .log-body{ margin:0; padding-left:1.1rem; color:var(--text-dim); font-size:.85rem; line-height:1.65; }
+  .log-body li{ margin-bottom:.35rem; }
+  .log-body li::marker{ color:var(--accent); }
+
+  /* ---------- Education ---------- */
+  .edu-card{ border:1px solid var(--border); background:var(--panel); border-radius:3px; padding:1.1rem 1.3rem; margin-bottom:.8rem; }
+  .edu-card .deg{ font-weight:600; font-size:.9rem; color:var(--text); }
+  .edu-card .inst{ font-size:.78rem; color:var(--text-dim); margin-top:.15rem; }
+  .lang-row{ display:flex; gap:2.5rem; margin-top:1.8rem; }
+  .lang-row .lname{ font-size:.85rem; color:var(--text); }
+  .lang-row .llevel{ font-size:.72rem; color:var(--accent); }
+
+  /* ---------- Contact ---------- */
+  .endpoint{
+    display:flex; align-items:center; justify-content:space-between;
+    border:1px solid var(--border); background:var(--panel); border-radius:3px;
+    padding:.9rem 1.2rem; margin-bottom:.6rem; font-size:.85rem;
+  }
+  .endpoint .k{ color:var(--text-dim); font-size:.7rem; margin-right:.7rem; }
+  .endpoint .v{ color:var(--text); }
+  .endpoint .go{ color:var(--accent); font-size:.72rem; }
+  .prompt-line{ font-size:.8rem; color:var(--text-dim); margin-bottom:1.2rem; }
+  .prompt-line .sym{ color:var(--accent); margin-right:.5rem; }
+
+  footer.page{ color:var(--text-dim); font-size:.7rem; padding:2rem 3.5rem; border-top:1px solid var(--border); margin-top:2rem; }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 860px){
+    .app-shell{ flex-direction:column; }
+    .sidebar{ position:relative; height:auto; width:100%; flex-direction:row; align-items:center; padding:1rem 1.25rem; }
+    .modules{ display:flex; margin:0 0 0 1.5rem; overflow-x:auto; }
+    .modules li + li{ margin-top:0; margin-left:.2rem; }
+    .sidebar-foot{ display:none; }
+    main{ padding: 2rem 1.4rem; }
+    .skill-row{ grid-template-columns: 100px 1fr 55px; gap:.6rem; }
+    footer.page{ padding: 1.5rem; }
+  }
+</style>
+</head>
+<body ng-controller="MainController as vm">
+
+<div id="boot">
+  <span>&gt; iniciando panel<span class="cursor">&nbsp;</span></span>
+</div>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand">
+        DAVID MUÑOZ<br>MANCERA
+        <small>Full Stack Developer</small>
+      </div>
+      <span class="status-pill"><span class="dot"></span> sistema en línea</span>
+
+      <ul class="modules">
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('overview')" ng-class="{active: vm.currentPage === 'overview'}"><span class="idx">01</span> overview</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('stack')" ng-class="{active: vm.currentPage === 'stack'}"><span class="idx">02</span> stack</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('uptime')" ng-class="{active: vm.currentPage === 'uptime'}"><span class="idx">03</span> uptime log</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('formacion')" ng-class="{active: vm.currentPage === 'formacion'}"><span class="idx">04</span> formación</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('contacto')" ng-class="{active: vm.currentPage === 'contacto'}"><span class="idx">05</span> contacto</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-foot">
+      Buenos Aires, Argentina<br>
+      <a href="mailto:david.mm1209@hotmail.com">david.mm1209@hotmail.com</a><br>
+      última compilación: 2026
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div style="flex:1; display:flex; flex-direction:column;">
+    <main>
+      <div ng-switch="vm.currentPage">
+
+        <!-- 01 OVERVIEW -->
+        <div ng-switch-when="overview">
+          <div class="module-tag"><span class="bar"></span> módulo 01</div>
+          <div class="hero">
+            <div class="role">// perfil profesional</div>
+            <h1>Construyo software que no se puede caer.</h1>
+            <p class="lede">
+              Full Stack Developer con más de 8 años diseñando, desarrollando y manteniendo aplicaciones
+              web de alta disponibilidad para organismos gubernamentales, salud, logística y servicios
+              empresariales. Dominio de Angular, TypeScript, PHP, Node.js y SQL, tanto evolucionando
+              plataformas en producción como levantando módulos desde cero. Con el tiempo asumí cada vez
+              más autonomía técnica: optimización de performance, integración de APIs REST, mentoría de
+              desarrolladores junior y coordinación de equipos bajo Scrum/Agile.
+            </p>
+
+            <div class="metrics">
+              <div class="metric">
+                <div class="num">8+</div>
+                <div class="lbl">años en producción</div>
+              </div>
+              <div class="metric">
+                <div class="num">5</div>
+                <div class="lbl">sectores distintos</div>
+              </div>
+              <div class="metric">
+                <div class="num">20%</div>
+                <div class="lbl">reducción de tiempos de sprint en Soflex</div>
+              </div>
+              <div class="metric">
+                <div class="num">50%</div>
+                <div class="lbl">reducción de carga en módulos críticos, Akeron</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 02 STACK -->
+        <div ng-switch-when="stack">
+          <div class="module-tag"><span class="bar"></span> módulo 02</div>
+          <h2><span class="cm">//</span> stack técnico</h2>
+
+          <div class="cat-title">frontend</div>
+          <div class="skill-row" ng-repeat="s in vm.frontend">
+            <span class="name">{{s.name}}</span>
+            <div class="gauge"><span style="width: {{s.pct}}%"></span></div>
+            <span class="years">{{s.label}}</span>
+          </div>
+
+          <div class="cat-title">backend</div>
+          <div class="skill-row" ng-repeat="s in vm.backend">
+            <span class="name">{{s.name}}</span>
+            <div class="gauge"><span style="width: {{s.pct}}%"></span></div>
+            <span class="years">{{s.label}}</span>
+          </div>
+
+          <div class="cat-title">datos</div>
+          <div class="skill-row" ng-repeat="s in vm.data">
+            <span class="name">{{s.name}}</span>
+            <div class="gauge"><span style="width: {{s.pct}}%"></span></div>
+            <span class="years">{{s.label}}</span>
+          </div>
+
+          <div class="cat-title">devops · herramientas · metodología</div>
+          <div class="tag-row">
+            <span class="tag" ng-repeat="t in vm.tools">{{t}}</span>
+          </div>
+        </div>
+
+        <!-- 03 UPTIME LOG -->
+        <div ng-switch-when="uptime">
+          <div class="module-tag"><span class="bar"></span> módulo 03</div>
+          <h2><span class="cm">//</span> bitácora de experiencia</h2>
+
+          <div class="log-entry" ng-repeat="job in vm.experience">
+            <div class="log-head">
+              <span class="log-time">[{{job.dates}}]</span>
+              <span class="log-place">{{job.location}}</span>
+            </div>
+            <div class="log-role">{{job.role}} — {{job.company}}</div>
+            <div class="log-stack">stack: {{job.stack}}</div>
+            <ul class="log-body">
+              <li ng-repeat="b in job.bullets">{{b}}</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 04 FORMACIÓN -->
+        <div ng-switch-when="formacion">
+          <div class="module-tag"><span class="bar"></span> módulo 04</div>
+          <h2><span class="cm">//</span> formación</h2>
+
+          <div class="edu-card" ng-repeat="e in vm.education">
+            <div class="deg">{{e.title}}</div>
+            <div class="inst">{{e.institution}}</div>
+          </div>
+
+          <div class="cat-title" style="margin-top:2rem;">formación complementaria</div>
+          <div class="tag-row">
+            <span class="tag" ng-repeat="c in vm.certs">{{c}}</span>
+          </div>
+
+          <div class="lang-row">
+            <div ng-repeat="l in vm.languages">
+              <div class="lname">{{l.name}}</div>
+              <div class="llevel">{{l.level}}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 05 CONTACTO -->
+        <div ng-switch-when="contacto">
+          <div class="module-tag"><span class="bar"></span> módulo 05</div>
+          <h2><span class="cm">//</span> contacto</h2>
+
+          <div class="prompt-line"><span class="sym">$</span>disponible para nuevas oportunidades como Full Stack / Angular Developer</div>
+
+          <a class="endpoint" href="mailto:david.mm1209@hotmail.com" style="display:flex;">
+            <span><span class="k">email</span><span class="v">david.mm1209@hotmail.com</span></span>
+            <span class="go">enviar →</span>
+          </a>
+          <a class="endpoint" href="tel:+5491133109406" style="display:flex;">
+            <span><span class="k">tel</span><span class="v">+54 9 11 3310-9406</span></span>
+            <span class="go">llamar →</span>
+          </a>
+          <a class="endpoint" href="https://linkedin.com/in/davidmmancera-m920501" target="_blank" style="display:flex;">
+            <span><span class="k">linkedin</span><span class="v">/in/davidmmancera-m920501</span></span>
+            <span class="go">abrir →</span>
+          </a>
+          <div class="endpoint">
+            <span><span class="k">ubicación</span><span class="v">Buenos Aires, Argentina</span></span>
+            <span class="go" style="color:var(--ok)">● local</span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <footer class="page">
+      © 2026 David Muñoz Mancera · construido con AngularJS + Bootstrap · sin frameworks de más
+    </footer>
+  </div>
+</div>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+
+<script>
+  var app = angular.module('portfolioApp', []);
+
+  app.controller('MainController', [function(){
+    var vm = this;
+
+    vm.currentPage = 'overview';
+
+    vm.goTo = function(page){
+      vm.currentPage = page;
+      window.scrollTo(0, 0);
+    };
+
+    vm.frontend = [
+      { name: 'Angular',     years: 7, label: '7 años' },
+      { name: 'JavaScript',  years: 8, label: '8 años' },
+      { name: 'TypeScript',  years: 8, label: '8 años' },
+      { name: 'HTML5 / CSS3',years: 8, label: '8 años' },
+      { name: 'Bootstrap',   years: 8, label: '8 años' },
+      { name: 'React',       years: 2, label: '2 años' },
+      { name: 'jQuery',      years: 1, label: '1 año' }
+    ];
+
+    vm.backend = [
+      { name: 'Node.js / Express', years: 7, label: '7 años' },
+      { name: 'PHP',               years: 6, label: '6 años' },
+      { name: 'REST APIs',         years: 5, label: '5 años' },
+      { name: 'Java + Spring Boot',years: 2, label: '2 años' },
+      { name: 'C#',                years: 2, label: '2 años' },
+      { name: '.NET Core',         years: 1, label: '1 año' },
+      { name: 'Python',            years: 1, label: '1 año' }
+    ];
+
+    vm.data = [
+      { name: 'SQL',         years: 8, label: '8 años' },
+      { name: 'MySQL',       years: 1, label: '1 año' },
+      { name: 'MongoDB',     years: 1, label: '1 año' },
+      { name: 'PostgreSQL',  years: 3, label: 'core' }
+    ];
+
+    // normalizar % de las barras sobre una escala de 8 años
+    [vm.frontend, vm.backend, vm.data].forEach(function(group){
+      group.forEach(function(s){ s.pct = Math.round((s.years / 8) * 100); });
+    });
+
+    vm.tools = [
+      'JWT', 'Microservicios', 'MVC', 'CI/CD (básico)', 'AWS (EC2, S3)', 'Apache',
+      'Git & GitHub', 'GitLab', 'Postman', 'Scrum', 'Agile',
+      'Unit Testing (JUnit / PHPUnit)', 'Geolocalización API'
+    ];
+
+    vm.experience = [
+      {
+        dates: '2020-06 – 2026-05', location: 'Buenos Aires, Argentina',
+        role: 'Full Stack Developer', company: 'Soflex S.A.',
+        stack: 'Angular · TypeScript · JavaScript · PHP · Node.js · SQL · REST APIs · Git · Scrum',
+        bullets: [
+          'Desarrollo e implementación de módulos para SISEP, plataforma de alta disponibilidad usada por organismos gubernamentales, fuerzas de seguridad y entidades de emergencia.',
+          'Reducción del 20% en los tiempos de entrega de sprint mediante revisiones de código más eficientes y coordinación técnica del equipo.',
+          'Gestión autónoma de proyectos: análisis de requerimientos, definición de soluciones técnicas y seguimiento de entregables.',
+          'Mentoría de practicantes y desarrolladores junior, distribuyendo tareas según fortalezas del equipo.',
+          'Participación en proyectos de asistencia social, gestión de refugios, registros públicos e historia clínica.'
+        ]
+      },
+      {
+        dates: '2022-05 – 2022-10', location: 'Buenos Aires, Argentina',
+        role: 'Full Stack Developer (Contractor)', company: 'Akeron',
+        stack: 'Angular · TypeScript · JavaScript · REST APIs · Node.js · .NET · Git',
+        bullets: [
+          'Reducción del 50% en los tiempos de carga de funcionalidades críticas mediante optimización y reutilización de datos del lado cliente.',
+          'Desarrollo frontend para plataforma de gestión logística y procesos aduaneros sobre arquitectura existente.',
+          'Trabajo colaborativo con el equipo backend para integración de servicios y APIs.'
+        ]
+      },
+      {
+        dates: '2019-09 – 2020-10', location: 'Buenos Aires, Argentina',
+        role: 'Full Stack Developer', company: 'MYMTEC Sistemas',
+        stack: 'Angular · TypeScript · JavaScript · SQL · REST APIs · jQuery · MVC · Git',
+        bullets: [
+          'Incremento del 25% en la retención de usuarios mediante rediseño de interfaz con jQuery y MVC.',
+          'Modernización de soluciones de gestión aduanera y logística.',
+          'Participación en definiciones funcionales y propuestas de mejora visual.'
+        ]
+      },
+      {
+        dates: '2018-10 – 2019-04', location: 'Bogotá, Colombia',
+        role: 'Full Stack Developer / Technical Lead', company: 'Quick / Praxair',
+        stack: 'Angular · .NET Core · MySQL · HTML · CSS · JavaScript',
+        bullets: [
+          'Migración de software legacy a arquitectura moderna con servicio web.',
+          'Desarrollo frontend y backend para clientes del sector industrial y logístico (Praxair Colombia).',
+          'Atención de requerimientos cumpliendo tiempos de respuesta y calidad establecidos.'
+        ]
+      },
+      {
+        dates: '2017-04 – 2018-10', location: 'Bogotá, Colombia',
+        role: 'Full Stack Developer Junior', company: 'HeOn Health OnLine',
+        stack: 'Angular · C# · SQL · JavaScript · TypeScript · HTML · CSS',
+        bullets: [
+          'Reducción del 20% en el tiempo de carga de datos mediante software administrativo para entidades de salud.',
+          'Desarrollo de módulos de historia clínica electrónica ambulatoria y hospitalaria (odontología, optometría).',
+          'Optimización de consultas y mecanismos de acceso a datos.'
+        ]
+      }
+    ];
+
+    vm.education = [
+      { title: 'Ingeniería Informática (en curso, avanzado)', institution: 'Universidad UADE — Buenos Aires, Argentina' },
+      { title: 'Tecnología en Informática (Licenciatura en Informática)', institution: 'Universidad Minuto de Dios — Bogotá, Colombia' }
+    ];
+
+    vm.certs = [
+      'Diplomado en Business Intelligence and Datamining — Uniminuto',
+      'Diplomado en Programación en Java — Politécnico de Colombia',
+      'Desarrollo Full Stack y Aplicaciones Híbridas — Fedesoft'
+    ];
+
+    vm.languages = [
+      { name: 'Español', level: 'nativo' },
+      { name: 'Inglés', level: 'intermedio B1' }
+    ];
+  }]);
+
+  // Boot overlay: se retira tras un instante breve
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      var boot = document.getElementById('boot');
+      if(boot){
+        boot.style.opacity = '0';
+        setTimeout(function(){ boot.remove(); }, 500);
+      }
+    }, 550);
+  });
+</script>
+
+</body>
+</html>
