@@ -34,7 +34,10 @@
     font-family: 'Inter', sans-serif;
     margin:0;
     min-height:100vh;
+    overflow-wrap: break-word;
   }
+
+  html, body{ overflow-x: hidden; max-width: 100%; }
 
   code, .mono, h1, h2, .brand, .nav-link, .badge-year, .log-time, .status-pill{
     font-family: 'IBM Plex Mono', monospace;
@@ -175,16 +178,90 @@
 
   footer.page{ color:var(--text-dim); font-size:.7rem; padding:2rem 3.5rem; border-top:1px solid var(--border); margin-top:2rem; }
 
-  /* ---------- Mobile ---------- */
+  /* ---------- Tablet / mobile (≤860px) ---------- */
   @media (max-width: 860px){
     .app-shell{ flex-direction:column; }
-    .sidebar{ position:relative; height:auto; width:100%; flex-direction:row; align-items:center; padding:1rem 1.25rem; }
-    .modules{ display:flex; margin:0 0 0 1.5rem; overflow-x:auto; }
-    .modules li + li{ margin-top:0; margin-left:.2rem; }
+
+    .sidebar{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: auto;
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .5rem .9rem;
+      padding: .8rem 1.1rem;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar > div:first-child{
+      display:flex; align-items:center; flex-wrap:wrap;
+      gap:.5rem .9rem; width:100%;
+    }
+
+    .brand{ font-size:.8rem; }
+    .brand br{ display:none; }
+    .brand small{ display:none; }
+
+    .status-pill{ margin-top:0; }
+
+    .modules{
+      display:flex; flex-wrap:nowrap; overflow-x:auto;
+      -webkit-overflow-scrolling:touch; scrollbar-width:none;
+      width:100%; margin:.2rem 0 0; gap:.15rem;
+      padding-bottom:.15rem;
+    }
+    .modules::-webkit-scrollbar{ display:none; }
+    .modules li{ flex-shrink:0; }
+    .modules li + li{ margin-top:0; margin-left:.15rem; }
+    .modules a{ padding:.5rem .7rem; white-space:nowrap; }
+
     .sidebar-foot{ display:none; }
-    main{ padding: 2rem 1.4rem; }
+
+    main{ padding: 2rem 1.4rem; max-width:100%; }
+
+    .hero .metrics{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem 1rem; }
+
     .skill-row{ grid-template-columns: 100px 1fr 55px; gap:.6rem; }
+
+    .log-entry{ padding:1.1rem 1.1rem; }
+    .endpoint{ padding:.8rem 1rem; }
+
     footer.page{ padding: 1.5rem; }
+  }
+
+  /* ---------- Mobile chico (≤480px) ---------- */
+  @media (max-width: 480px){
+    .sidebar{ padding:.7rem .9rem; }
+    main{ padding: 1.6rem 1.1rem; }
+
+    .hero .role{ font-size:.9rem; }
+    .hero .metrics{ grid-template-columns:1fr 1fr; gap:1.3rem .8rem; margin-top:1.6rem; }
+    .metric .num{ font-size:1.25rem; }
+
+    .skill-row{
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "name years" "gauge gauge";
+      row-gap:.35rem; margin-bottom:.9rem;
+    }
+    .skill-row .name{ grid-area:name; }
+    .skill-row .years{ grid-area:years; }
+    .skill-row .gauge{ grid-area:gauge; }
+
+    .log-head{ flex-direction:column; align-items:flex-start; gap:.2rem; }
+    .log-entry{ padding:1rem; }
+    .log-role{ font-size:.9rem; }
+
+    .edu-card{ padding:.9rem 1rem; }
+    .lang-row{ gap:1.4rem; flex-wrap:wrap; }
+
+    .endpoint{ flex-wrap:wrap; gap:.4rem; }
+    .endpoint > span:first-child{ display:flex; flex-direction:column; gap:.15rem; }
+    .endpoint .k{ margin-right:0; }
+
+    footer.page{ padding: 1.3rem 1.1rem; font-size:.65rem; }
   }
 </style>
 </head>
@@ -231,7 +308,7 @@
           <div class="module-tag"><span class="bar"></span> módulo 01</div>
           <div class="hero">
             <div class="role">// perfil profesional</div>
-            <h1>Construyo software que no se puede caer.</h1>
+            <h1>Software robusto, escalable y optimizado para todos los entornos.</h1>
             <p class="lede">
               Full Stack Developer con más de 8 años diseñando, desarrollando y manteniendo aplicaciones
               web de alta disponibilidad para organismos gubernamentales, salud, logística y servicios
