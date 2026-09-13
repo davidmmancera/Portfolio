@@ -277,17 +277,17 @@
   <aside class="sidebar">
     <div>
       <div class="brand">
-        DAVID MUÑOZ<br>MANCERA
+        DAVID MUÑOZ MANCERA<br>
         <small>Full Stack Developer</small>
       </div>
       <span class="status-pill"><span class="dot"></span> sistema en línea</span>
 
       <ul class="modules">
-        <li><a href="javascript:void(0)" ng-click="vm.goTo('overview')" ng-class="{active: vm.currentPage === 'overview'}"><span class="idx">01</span> overview</a></li>
-        <li><a href="javascript:void(0)" ng-click="vm.goTo('stack')" ng-class="{active: vm.currentPage === 'stack'}"><span class="idx">02</span> stack</a></li>
-        <li><a href="javascript:void(0)" ng-click="vm.goTo('uptime')" ng-class="{active: vm.currentPage === 'uptime'}"><span class="idx">03</span> uptime log</a></li>
-        <li><a href="javascript:void(0)" ng-click="vm.goTo('formacion')" ng-class="{active: vm.currentPage === 'formacion'}"><span class="idx">04</span> formación</a></li>
-        <li><a href="javascript:void(0)" ng-click="vm.goTo('contacto')" ng-class="{active: vm.currentPage === 'contacto'}"><span class="idx">05</span> contacto</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('overview')" ng-class="{active: vm.currentPage === 'overview'}"><span class="idx">01</span> Overview</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('stack')" ng-class="{active: vm.currentPage === 'stack'}"><span class="idx">02</span> Stack</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('uptime')" ng-class="{active: vm.currentPage === 'uptime'}"><span class="idx">03</span> Uptime log</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('formacion')" ng-class="{active: vm.currentPage === 'formacion'}"><span class="idx">04</span> Formación</a></li>
+        <li><a href="javascript:void(0)" ng-click="vm.goTo('contacto')" ng-class="{active: vm.currentPage === 'contacto'}"><span class="idx">05</span> Contacto</a></li>
       </ul>
     </div>
 
@@ -329,7 +329,7 @@
               </div>
               <div class="metric">
                 <div class="num">20%</div>
-                <div class="lbl">reducción de tiempos de sprint en Soflex</div>
+                <div class="lbl">reducción de tiempos de sprint como Tech Lead, Soflex</div>
               </div>
               <div class="metric">
                 <div class="num">50%</div>
@@ -344,28 +344,28 @@
           <div class="module-tag"><span class="bar"></span> módulo 02</div>
           <h2><span class="cm">//</span> stack técnico</h2>
 
-          <div class="cat-title">frontend</div>
+          <div class="cat-title">Frontend</div>
           <div class="skill-row" ng-repeat="s in vm.frontend">
             <span class="name">{{s.name}}</span>
             <div class="gauge"><span style="width: {{s.pct}}%"></span></div>
             <span class="years">{{s.label}}</span>
           </div>
 
-          <div class="cat-title">backend</div>
+          <div class="cat-title">Backend</div>
           <div class="skill-row" ng-repeat="s in vm.backend">
             <span class="name">{{s.name}}</span>
             <div class="gauge"><span style="width: {{s.pct}}%"></span></div>
             <span class="years">{{s.label}}</span>
           </div>
 
-          <div class="cat-title">datos</div>
+          <div class="cat-title">Datos</div>
           <div class="skill-row" ng-repeat="s in vm.data">
             <span class="name">{{s.name}}</span>
             <div class="gauge"><span style="width: {{s.pct}}%"></span></div>
             <span class="years">{{s.label}}</span>
           </div>
 
-          <div class="cat-title">devops · herramientas · metodología</div>
+          <div class="cat-title">DevOps · Herramientas · Metodologías</div>
           <div class="tag-row">
             <span class="tag" ng-repeat="t in vm.tools">{{t}}</span>
           </div>
@@ -463,12 +463,12 @@
     };
 
     vm.frontend = [
-      { name: 'Angular',     years: 7, label: '7 años' },
-      { name: 'JavaScript',  years: 8, label: '8 años' },
+      { name: 'Angular',     years: 7, label: '7 años' }, 
+      { name: 'React',       years: 2, label: '3 años' },
+      { name: 'JavaScript',  years: 8, label: '7 años' },
       { name: 'TypeScript',  years: 8, label: '8 años' },
       { name: 'HTML5 / CSS3',years: 8, label: '8 años' },
-      { name: 'Bootstrap',   years: 8, label: '8 años' },
-      { name: 'React',       years: 2, label: '2 años' },
+      { name: 'Bootstrap',   years: 8, label: '8 años' },     
       { name: 'jQuery',      years: 1, label: '1 año' }
     ];
 
@@ -479,14 +479,14 @@
       { name: 'Java + Spring Boot',years: 2, label: '2 años' },
       { name: 'C#',                years: 2, label: '2 años' },
       { name: '.NET Core',         years: 1, label: '1 año' },
-      { name: 'Python',            years: 1, label: '1 año' }
+      { name: 'Python',            years: 1, label: '2 años' }
     ];
 
     vm.data = [
       { name: 'SQL',         years: 8, label: '8 años' },
       { name: 'MySQL',       years: 1, label: '1 año' },
       { name: 'MongoDB',     years: 1, label: '1 año' },
-      { name: 'PostgreSQL',  years: 3, label: 'core' }
+      { name: 'PostgreSQL',  years: 3, label: '1 año' }
     ];
 
     // normalizar % de las barras sobre una escala de 8 años
